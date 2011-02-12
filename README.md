@@ -9,7 +9,7 @@ Install
 Configure your settings.py:
 ----------------------------
     ITEM_PIPELINES = [
-      'scrapymongodb.ElasticSearchPipeline',
+      'scrapyelasticsearch.ElasticSearchPipeline',
     ]
 
     ELASTICSEARCH_SERVER = 'localhost'
