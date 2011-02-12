@@ -13,7 +13,7 @@ Configure your settings.py:
     ]
 
     ELASTICSEARCH_SERVER = 'localhost'
-    ELASTICSEARCH_PORT = 27017
+    ELASTICSEARCH_PORT = 9200
     ELASTICSEARCH_INDEX = 'scrapy'
     ELASTICSEARCH_TYPE = 'items'
     ELASTICSEARCH_UNIQ_KEY = 'url'

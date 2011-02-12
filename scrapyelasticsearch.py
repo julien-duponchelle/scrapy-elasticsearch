@@ -14,22 +14,22 @@
 
 """Elastic Search Pipeline for scrappy"""
 
-import pyes
+from pyes import ES
 import hashlib
 from scrapy.conf import settings
 from scrapy import log
 
 class ElasticSearchPipeline(object):
     def __init__(self):
-        uri = settings['ELASTICSEARCH_SERVER'] + ":" + settings['ELASTICSEARCH_PORT']
-        self.es = pyes.connect_thread_local([uri])
+        uri = "%s:%d" % (settings['ELASTICSEARCH_SERVER'], settings['ELASTICSEARCH_PORT'])
+        self.es = ES([uri])
 
     def process_item(self, item, spider):
         if self.__get_uniq_key() is None:
             self.es.index(dict(item), settings['ELASTICSEARCH_INDEX'], settings['ELASTICSEARCH_TYPE'])
         else:
             self.es.index(dict(item), settings['ELASTICSEARCH_INDEX'], settings['ELASTICSEARCH_TYPE'],
-                          haslib.sha1(item[self.__get_uniq_key()]).hexdigest())
+                          hashlib.sha1(item[self.__get_uniq_key()]).hexdigest())
         log.msg("Item send to Elastic Search %s" %
                     (settings['ELASTIC_SEARCH_INDEX']),
                     level=log.DEBUG, spider=spider)  
