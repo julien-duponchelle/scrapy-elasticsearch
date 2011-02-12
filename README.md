@@ -9,18 +9,18 @@ Install
 Configure your settings.py:
 ----------------------------
     ITEM_PIPELINES = [
-      'scrapymongodb.MongoDBPipeline',
+      'scrapymongodb.ElasticSearchPipeline',
     ]
 
-    MONGODB_SERVER = 'localhost'
-    MONGODB_PORT = 27017
-    MONGODB_DB = 'scrapy'
-    MONGODB_COLLECTION = 'items'
-    MONGODB_UNIQ_KEY = 'url'
+    ELASTICSEARCH_SERVER = 'localhost'
+    ELASTICSEARCH_PORT = 27017
+    ELASTICSEARCH_INDEX = 'scrapy'
+    ELASTICSEARCH_TYPE = 'items'
+    ELASTICSEARCH_UNIQ_KEY = 'url'
 
 Changelog
 =========
-0.1
+0.1: First Version
 
 
 Licence
