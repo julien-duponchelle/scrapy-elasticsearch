@@ -21,7 +21,8 @@ from scrapy import log
 
 class ElasticSearchPipeline(object):
     def __init__(self):
-        self.es = pyes.connect(['%s:%d'] % (settings['ELASTICSEARCH_SERVER'], settings['ELASTICSEARCH_PORT']))
+        uri = settings['ELASTICSEARCH_SERVER'] + ":" + settings['ELASTICSEARCH_PORT']
+        self.es = pyes.connect_thread_local([uri])
 
     def process_item(self, item, spider):
         if self.__get_uniq_key() is None:
