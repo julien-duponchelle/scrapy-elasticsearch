@@ -1,13 +1,13 @@
 Description
 ===========
-It's a pipeline which allow you to store scrapy items in elastic search engine.
+Scrapy-ElasticSearch is a pipeline which allows Scrapy objects to be sent directly to ElasticSearch.
 
 Install
 =======
    pip install "ScrapyElasticSearch"
 
-Configure your settings.py:
-----------------------------
+Configure settings.py:
+----------------------
     ITEM_PIPELINES = [
       'scrapyelasticsearch.ElasticSearchPipeline',
     ]
@@ -20,8 +20,7 @@ Configure your settings.py:
 
 Changelog
 =========
-0.1: First Version
-
+0.1: Initial release
 
 Licence
 =======
