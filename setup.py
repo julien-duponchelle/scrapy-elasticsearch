@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(name='ScrapyElasticSearch',
       version='0.2',
       license='Apache License, Version 2.0',
-      description='A pipeline which allows Scrapy objects to be sent directly to ElasticSearch.',
+      description='Scrapy pipeline which allow you to store scrapy items in Elastic Search.',
       author='Julien Duponchelle',
       author_email='julien@duponchelle.info',
       url='http://github.com/noplay/scrapy-elasticsearch',
