@@ -16,27 +16,28 @@
 
 from pyes import ES
 import hashlib
-from scrapy.conf import settings
+from scrapy.utils.project import get_project_settings
 from scrapy import log
 
 class ElasticSearchPipeline(object):
     def __init__(self):
-        uri = "%s:%d" % (settings['ELASTICSEARCH_SERVER'], settings['ELASTICSEARCH_PORT'])
+        self.settings = get_project_settings()
+        uri = "%s:%d" % (self.settings['ELASTICSEARCH_SERVER'], self.settings['ELASTICSEARCH_PORT'])
         self.es = ES([uri])
 
     def process_item(self, item, spider):
         if self.__get_uniq_key() is None:
-            self.es.index(dict(item), settings['ELASTICSEARCH_INDEX'], settings['ELASTICSEARCH_TYPE'])
+            self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'])
         else:
-            self.es.index(dict(item), settings['ELASTICSEARCH_INDEX'], settings['ELASTICSEARCH_TYPE'],
+            self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
                           hashlib.sha1(item[self.__get_uniq_key()]).hexdigest())
         log.msg("Item send to Elastic Search %s" %
-                    (settings['ELASTIC_SEARCH_INDEX']),
-                    level=log.DEBUG, spider=spider)  
+                    (self.settings['ELASTICSEARCH_INDEX']),
+                    level=log.DEBUG, spider=spider)
         return item
 
     def __get_uniq_key(self):
-        if not settings['ELASTICSEARCH_UNIQ_KEY'] or settings['ELASTICSEARCH_UNIQ_KEY'] == "":
+        if not self.settings['ELASTICSEARCH_UNIQ_KEY'] or self.settings['ELASTICSEARCH_UNIQ_KEY'] == "":
             return None
-        return settings['ELASTICSEARCH_UNIQ_KEY']
-   
+        return self.settings['ELASTICSEARCH_UNIQ_KEY']
+

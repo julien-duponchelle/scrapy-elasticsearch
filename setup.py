@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name='ScrapyElasticSearch',
-      version='0.1',
+      version='0.2',
       license='Apache License, Version 2.0',
       description='A pipeline which allows Scrapy objects to be sent directly to ElasticSearch.',
       author='Julien Duponchelle',
