@@ -22,7 +22,15 @@ Configure settings.py:
 
 Changelog
 =========
-0.1: Initial release
+
+* 0.1: Initial release
+* 0.2: Scrapy 0.18 support
+* 0.3: Auth support
+
+Contributors
+=============
+* Julien Duponchelle (http://github.com/noplay)
+* Jay Stewart (https://github.com/solidground)
 
 Licence
 =======
