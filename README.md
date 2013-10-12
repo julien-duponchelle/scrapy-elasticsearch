@@ -12,8 +12,10 @@ Configure settings.py:
       'scrapyelasticsearch.ElasticSearchPipeline',
     ]
 
-    ELASTICSEARCH_SERVER = 'localhost'
-    ELASTICSEARCH_PORT = 9200
+    ELASTICSEARCH_SERVER = 'localhost' # If not 'localhost' prepend 'http://'
+    ELASTICSEARCH_PORT = 9200 # If port 80 leave blank
+    ELASTICSEARCH_USERNAME = ''
+    ELASTICSEARCH_PASSWORD = ''
     ELASTICSEARCH_INDEX = 'scrapy'
     ELASTICSEARCH_TYPE = 'items'
     ELASTICSEARCH_UNIQ_KEY = 'url'

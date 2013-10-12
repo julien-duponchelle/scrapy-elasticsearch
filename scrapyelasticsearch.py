@@ -21,14 +21,26 @@ from scrapy import log
 
 class ElasticSearchPipeline(object):
     def __init__(self):
+
         self.settings = get_project_settings()
-        uri = "%s:%d" % (self.settings['ELASTICSEARCH_SERVER'], self.settings['ELASTICSEARCH_PORT'])
-        self.es = ES([uri])
+
+        basic_auth = {'username': self.settings['ELASTICSEARCH_USERNAME'], 'password': self.settings['ELASTICSEARCH_PASSWORD']}
+
+        if self.settings['ELASTICSEARCH_PORT']:
+
+            uri = "%s:%d" % (self.settings['ELASTICSEARCH_SERVER'], self.settings['ELASTICSEARCH_PORT'])
+        else:
+            uri = "%s" % (self.settings['ELASTICSEARCH_SERVER'])
+
+        self.es = ES([uri], basic_auth=basic_auth)
 
     def process_item(self, item, spider):
         if self.__get_uniq_key() is None:
-            self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'])
+            log.msg("ELASTICSEARCH_UNIQ_KEY is NONE")
+            self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
+                          id=item['id'], op_type='create',)
         else:
+            log.msg("Generation SHA1")
             self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
                           hashlib.sha1(item[self.__get_uniq_key()]).hexdigest())
         log.msg("Item send to Elastic Search %s" %
