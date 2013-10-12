@@ -36,9 +36,11 @@ class ElasticSearchPipeline(object):
 
     def process_item(self, item, spider):
         if self.__get_uniq_key() is None:
+            log.msg("ELASTICSEARCH_UNIQ_KEY is NONE")
             self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
                           id=item['id'], op_type='create',)
         else:
+            log.msg("Generation SHA1")
             self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
                           hashlib.sha1(item[self.__get_uniq_key()]).hexdigest())
         log.msg("Item send to Elastic Search %s" %
