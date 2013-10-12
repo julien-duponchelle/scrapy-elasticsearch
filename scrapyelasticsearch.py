@@ -21,9 +21,18 @@ from scrapy import log
 
 class ElasticSearchPipeline(object):
     def __init__(self):
+
         self.settings = get_project_settings()
-        uri = "%s:%d" % (self.settings['ELASTICSEARCH_SERVER'], self.settings['ELASTICSEARCH_PORT'])
-        self.es = ES([uri])
+
+        basic_auth = {'username': self.settings['ELASTICSEARCH_USERNAME'], 'password': self.settings['ELASTICSEARCH_PASSWORD']}
+
+        if self.settings['ELASTICSEARCH_PORT']:
+
+            uri = "%s:%d" % (self.settings['ELASTICSEARCH_SERVER'], self.settings['ELASTICSEARCH_PORT'])
+        else:
+            uri = "%s" % (self.settings['ELASTICSEARCH_SERVER'])
+
+        self.es = ES([uri], basic_auth=basic_auth)
 
     def process_item(self, item, spider):
         if self.__get_uniq_key() is None:
