@@ -40,7 +40,6 @@ class ElasticSearchPipeline(object):
             self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
                           id=item['id'], op_type='create',)
         else:
-            log.msg("Generation SHA1")
             self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
                           hashlib.sha1(item[self.__get_uniq_key()]).hexdigest())
         log.msg("Item send to Elastic Search %s" %
