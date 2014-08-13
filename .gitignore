@@ -1,2 +1,4 @@
 *~
 *.pyc
+.scrapyelasticsearch2.py.swp
+.ropeproject
