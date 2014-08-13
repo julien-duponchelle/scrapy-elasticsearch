@@ -50,11 +50,11 @@ class ElasticSearchPipeline2(object):
                               hashlib.sha1(item[self.__get_uniq_key()]).hexdigest())
             log.msg("Item sent to Elastic Search %s" %
                         (self.settings['ELASTICSEARCH_INDEX']),
-                        level=log.DEBUG, spider=spider)
+                        level=self.settings['ELASTICSEARCH_LOG_LEVEL'], spider=spider)
             return item
 
     def __get_uniq_key(self):
-        if not self.settings['ELASTICSEARCH_UNIQ_KEY'] or self.settings['ELASTICSEARCH_UNIQ_KEY'] == "":
-            return None
+        #if not self.settings['ELASTICSEARCH_UNIQ_KEY'] or self.settings['ELASTICSEARCH_UNIQ_KEY'] == "":
+        #    return None
         return self.settings['ELASTICSEARCH_UNIQ_KEY']
 
