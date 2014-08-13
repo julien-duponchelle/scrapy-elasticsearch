@@ -36,7 +36,7 @@ class ElasticSearchPipeline2(object):
 
         self.es = ES([uri], basic_auth=basic_auth)
 
-    def uploadItem(self, item, id=None):
+    def index_item(self, item, id=None):
         op_type = 'none'
         uniq_key = self.__get_uniq_key()
         if id:
@@ -44,7 +44,7 @@ class ElasticSearchPipeline2(object):
         else:
             if uniq_key:
                 local_id = hashlib.sha1(item[uniq_key)]).hexdigest()
-                log.msg("ELASTICSEARCH_UNIQ_KEY is NONE")
+                log.msg("Generated unique key %s" % local_id)
             else:
                 op_type = 'create'
                 local_id = item['id']
@@ -60,7 +60,7 @@ class ElasticSearchPipeline2(object):
             for each in item:
                 self.process_item(each, spider)
         else:
-            self.uploadItem(item)
+            self.index_item(item)
             log.msg("Item sent to Elastic Search %s" %
                         (self.settings['ELASTICSEARCH_INDEX']),
                         level=self.settings['ELASTICSEARCH_LOG_LEVEL'], spider=spider)
