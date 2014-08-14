@@ -1,4 +1,6 @@
 from distutils.core import setup
+from setuptools import find_packages
+
 setup(name='ScrapyElasticSearch2',
       version='0.1',
       license='Apache License, Version 2.0',
@@ -8,7 +10,7 @@ setup(name='ScrapyElasticSearch2',
       url='https://github.com/knockrentals/scrapy-elasticsearch2.git',
       download_url = 'https://github.com/knockrentals/scrapy-elasticsearch2/tarball/master',
       keywords="scrapy elastic search",
-      py_modules=['scrapyelasticsearch2'],
+      packages = find_packages(),
       platforms = ['Any'],
       install_requires = ['scrapy', 'pyes'],
       classifiers = [ 'Development Status :: 4 - Beta',
