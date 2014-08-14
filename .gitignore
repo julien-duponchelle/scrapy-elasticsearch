@@ -1,4 +1,7 @@
 *~
 *.pyc
-.scrapyelasticsearch2.py.swp
+.*sw*
+*egg-info
+dist
 .ropeproject
+MANIFEST
