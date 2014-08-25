@@ -41,11 +41,22 @@ class ElasticSearchPipeline(object):
                           id=item['id'], op_type='create',)
         else:
             self.es.index(dict(item), self.settings['ELASTICSEARCH_INDEX'], self.settings['ELASTICSEARCH_TYPE'],
-                          hashlib.sha1(item[self.__get_uniq_key()]).hexdigest())
+                          self._get_item_key(item))
         log.msg("Item send to Elastic Search %s" %
                     (self.settings['ELASTICSEARCH_INDEX']),
                     level=log.DEBUG, spider=spider)
         return item
+
+    def _get_item_key(self, item):
+        uniq = self.__get_uniq_key()
+
+        if isinstance(uniq, list):
+            values = [item[key] for key in uniq]
+            value = ''.join(values)
+        else:
+            value = uniq
+
+        return hashlib.sha1(value).hexdigest()
 
     def __get_uniq_key(self):
         if not self.settings['ELASTICSEARCH_UNIQ_KEY'] or self.settings['ELASTICSEARCH_UNIQ_KEY'] == "":
