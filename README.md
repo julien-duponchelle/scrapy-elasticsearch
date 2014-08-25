@@ -26,6 +26,7 @@ Changelog
 * 0.1: Initial release
 * 0.2: Scrapy 0.18 support
 * 0.3: Auth support
+* 0.4: Remove debug
 
 Contributors
 =============
