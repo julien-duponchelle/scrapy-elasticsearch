@@ -1,14 +1,14 @@
 from distutils.core import setup
 from setuptools import find_packages
 
-setup(name='ScrapyElasticSearch2',
-      version='0.1',
+setup(name='ScrapyElasticSearch',
+      version='0.6',
       license='Apache License, Version 2.0',
       description='Scrapy pipeline which allow you to store multiple scrapy items in Elastic Search.',
-      author='Michael Malocha',
-      author_email='michael@knockrentals',
-      url='https://github.com/knockrentals/scrapy-elasticsearch2.git',
-      download_url = 'https://github.com/knockrentals/scrapy-elasticsearch2/tarball/master',
+      author='Michael Malocha, Julien Duponchelle',
+      author_email='michael@knockrentals.com, julien@duponchelle.info',
+      url='https://github.com/knockrentals/scrapy-elasticsearch.git',
+      download_url = 'https://github.com/knockrentals/scrapy-elasticsearch/tarball/master',
       keywords="scrapy elastic search",
       packages = find_packages(),
       platforms = ['Any'],

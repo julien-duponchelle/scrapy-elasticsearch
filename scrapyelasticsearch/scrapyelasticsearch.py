@@ -17,14 +17,13 @@
 """Elastic Search Pipeline for scrappy expanded  with support for multiple items"""
 
 from pyes import ES
-import hashlib
-from scrapy.utils.project import get_project_settings
 from scrapy import log
+from scrapy.utils.project import get_project_settings
+import hashlib
 import types
 
-class ElasticSearchPipeline2(object):
+class ElasticSearchPipeline(object):
     def __init__(self):
-
         self.settings = get_project_settings()
 
         basic_auth = {'username': self.settings['ELASTICSEARCH_USERNAME'], 'password': self.settings['ELASTICSEARCH_PASSWORD']}
@@ -36,18 +35,14 @@ class ElasticSearchPipeline2(object):
 
         self.es = ES([uri], basic_auth=basic_auth)
 
-    def index_item(self, item, id=None):
-        op_type = 'none'
-        uniq_key = self.__get_uniq_key()
-        if id:
-            local_id = id
+    def index_item(self, item):
+        if self.settings['ELASTICSEARCH_UNIQ_KEY']:
+            local_id = hashlib.sha1(item[uniq_key)]).hexdigest()
+            log.msg("Generated unique key %s" % local_id, level=self.settings['ELASTICSEARCH_LOG_LEVEL'])
+            op_type = 'none'
         else:
-            if uniq_key:
-                local_id = hashlib.sha1(item[uniq_key)]).hexdigest()
-                log.msg("Generated unique key %s" % local_id)
-            else:
-                op_type = 'create'
-                local_id = item['id']
+            op_type = 'create'
+            local_id = item['id']
         self.es.index(dict(item),
                       self.settings['ELASTICSEARCH_INDEX'],
                       self.settings['ELASTICSEARCH_TYPE'],
@@ -62,12 +57,6 @@ class ElasticSearchPipeline2(object):
         else:
             self.index_item(item)
             log.msg("Item sent to Elastic Search %s" %
-                        (self.settings['ELASTICSEARCH_INDEX']),
-                        level=self.settings['ELASTICSEARCH_LOG_LEVEL'], spider=spider)
+                    (self.settings['ELASTICSEARCH_INDEX']),
+                    level=self.settings['ELASTICSEARCH_LOG_LEVEL'], spider=spider)
             return item
-
-    def __get_uniq_key(self):
-        #if not self.settings['ELASTICSEARCH_UNIQ_KEY'] or self.settings['ELASTICSEARCH_UNIQ_KEY'] == "":
-        #    return None
-        return self.settings['ELASTICSEARCH_UNIQ_KEY']
-

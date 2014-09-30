@@ -1,12 +1,12 @@
 Description
 ===========
-Scrapy-ElasticSearch is a pipeline which allows multiple Scrapy objects to be sent directly to ElasticSearch.
+Scrapy pipeline which allow you to store scrapy items in Elastic Search.
 
 Install
 =======
-   pip install "ScrapyElasticSearch2"
+   pip install ScrapyElasticSearch
 
-Configure settings.py: 
+Configure settings.py:
 ----------------------
     from scrapy import log
 
@@ -26,11 +26,17 @@ Configure settings.py:
 Changelog
 =========
 
+* 0.5: Abilit to persist object; Option to specify logging level
+* 0.4: Remove debug
+* 0.3: Auth support
+* 0.2: Scrapy 0.18 support
 * 0.1: Initial release
 
 Contributors
 =============
-* Michael Malocha <michael@knockrentals.com> 
+* Michael Malocha <michael@knockrentals.com>
+* Julien Duponchelle (http://github.com/noplay)
+* Jay Stewart (https://github.com/solidground)
 
 Licence
 =======
