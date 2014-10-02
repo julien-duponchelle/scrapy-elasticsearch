@@ -1,3 +1,6 @@
+# !!! NOTICE !!!
+###### The official scrapy-elasticsearch repo has been moved to [here](https://github.com/knockrentals/scrapy-elasticsearch)
+
 Description
 ===========
 Scrapy-ElasticSearch is a pipeline which allows Scrapy objects to be sent directly to ElasticSearch.
