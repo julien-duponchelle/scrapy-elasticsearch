@@ -32,6 +32,10 @@ Changelog
 * 0.2: Scrapy 0.18 support
 * 0.1: Initial release
 
+Issues
+=============
+If you find any bugs or have any questions, please report them to "issues" (https://github.com/knockrentals/scrapy-elasticsearch/issues)
+
 Contributors
 =============
 * Michael Malocha <michael@knockrentals.com>
