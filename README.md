@@ -11,7 +11,7 @@ Configure settings.py:
     from scrapy import log
 
     ITEM_PIPELINES = [
-      'scrapyelasticsearch.ElasticSearchPipeline',
+	'scrapyelasticsearch.scrapyelasticsearch.ElasticSearchPipeline',
     ]
 
     ELASTICSEARCH_SERVER = 'localhost' # If not 'localhost' prepend 'http://'
