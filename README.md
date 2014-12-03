@@ -26,15 +26,21 @@ Configure settings.py:
 Changelog
 =========
 
+* 0.6: Bug fix
 * 0.5: Abilit to persist object; Option to specify logging level
 * 0.4: Remove debug
 * 0.3: Auth support
 * 0.2: Scrapy 0.18 support
 * 0.1: Initial release
 
+Issues
+=============
+If you find any bugs or have any questions, please report them to "issues" (https://github.com/knockrentals/scrapy-elasticsearch/issues)
+
 Contributors
 =============
 * Michael Malocha <michael@knockrentals.com>
+* @ignaciovazquez (https://github.com/ignaciovazquez)
 * Julien Duponchelle (http://github.com/noplay)
 * Jay Stewart (https://github.com/solidground)
 
