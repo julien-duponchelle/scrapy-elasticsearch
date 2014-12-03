@@ -39,9 +39,9 @@ If you find any bugs or have any questions, please report them to "issues" (http
 
 Contributors
 =============
-* Michael Malocha <michael@knockrentals.com>
-* @ignaciovazquez (https://github.com/ignaciovazquez)
-* Julien Duponchelle (http://github.com/noplay)
+* Michael Malocha (https://github.com/mjm159)
+* Ignacio Vazquez (https://github.com/ignaciovazquez)
+* Julien Duponchelle (https://github.com/noplay)
 * Jay Stewart (https://github.com/solidground)
 
 Licence
