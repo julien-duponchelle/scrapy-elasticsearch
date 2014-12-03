@@ -22,71 +22,42 @@ from scrapy.utils.project import get_project_settings
 import hashlib
 import types
 
-class MalformSettingException(Exception):
-    pass
-
-class KeyNotFoundException(Exception):
-    pass
-
 class ElasticSearchPipeline(object):
     def __init__(self):
         self.settings = get_project_settings()
 
-        self.enforce_settings()
-
-        self.logging_level = self.settings['ELASTICSEARCH_LOG_LEVEL']
-
         basic_auth = {'username': self.settings['ELASTICSEARCH_USERNAME'], 'password': self.settings['ELASTICSEARCH_PASSWORD']}
 
-        uri = "%s:%d" % (self.settings['ELASTICSEARCH_SERVER'], self.settings['ELASTICSEARCH_PORT'])
+        if self.settings['ELASTICSEARCH_PORT']:
+            uri = "%s:%d" % (self.settings['ELASTICSEARCH_SERVER'], self.settings['ELASTICSEARCH_PORT'])
+        else:
+            uri = "%s" % (self.settings['ELASTICSEARCH_SERVER'])
 
         self.es = ES([uri], basic_auth=basic_auth)
 
-    def enforce_settings(self):
-        # Enforce required Keys:
-        if not 'ELASTICSEARCH_SERVER' in self.settings:
-            raise KeyNotFoundException
-
-        if self.settings['ELASTICSEARCH_SERVER'].startswith('http'):
-            raise MalformSettingException('ELASTICSEARCH_SERVER must start with http')
-
-        if not isinstance(self.settings['ELASTICSEARCH_PORT'], int):
-            raise KeyNotFoundException
-
-        if not 'ELASTICSEARCH_PORT' in self.settings:
-            raise MalformSettingException('ELASTICSEARCH_PORT must be integer (e.g: 80, 9200)')
-
-    def index_item(self, item, force_insert = False):
-        """
-            @param force_insert - flag to control whether to create or index
-        """
-        if self.settings['ELASTICSEARCH_UNIQ_KEY'] and self.settings['ELASTICSEARCH_UNIQ_KEY'] != '' and not force_insert:
-            uniq_key = hashlib.sha1(item[uniq_key]).hexdigest()
-            log.msg("Generated unique key %s" % uniq_key, level=self.logging_level)
-            return self.es.index(dict(item),
-                                 self.settings['ELASTICSEARCH_INDEX'],
-                                 self.settings['ELASTICSEARCH_TYPE'],
-                                 id=uniq_key)
-
-        # Force to create a new index
-        return self.es.index(dict(item),
-                             self.settings['ELASTICSEARCH_INDEX'],
-                             self.settings['ELASTICSEARCH_TYPE'],
-                             id=item['id'],
-                             force_insert=True)
+    def index_item(self, item):
+        if self.settings['ELASTICSEARCH_UNIQ_KEY']:
+            uniq_key = self.settings['ELASTICSEARCH_UNIQ_KEY']
+            local_id = hashlib.sha1(item[uniq_key)]).hexdigest()
+            log.msg("Generated unique key %s" % local_id, level=self.settings['ELASTICSEARCH_LOG_LEVEL'])
+            op_type = 'none'
+        else:
+            op_type = 'create'
+            local_id = item['id']
+        self.es.index(dict(item),
+                      self.settings['ELASTICSEARCH_INDEX'],
+                      self.settings['ELASTICSEARCH_TYPE'],
+                      id=local_id,
+                      op_type=op_type)
 
 
-    """
-    Gets called by scrapy
-    """
     def process_item(self, item, spider):
-        # Recursively process items in list or generator
         if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
             for each in item:
                 self.process_item(each, spider)
-
-        self.index_item(item)
-        log.msg("Item sent to Elastic Search %s" %
-                (self.settings['ELASTICSEARCH_INDEX']),
-                level=self.logging_level, spider=spider)
-        return item
+        else:
+            self.index_item(item)
+            log.msg("Item sent to Elastic Search %s" %
+                    (self.settings['ELASTICSEARCH_INDEX']),
+                    level=self.settings['ELASTICSEARCH_LOG_LEVEL'], spider=spider)
+            return item
