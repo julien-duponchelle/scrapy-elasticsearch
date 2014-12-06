@@ -30,7 +30,13 @@ class ElasticSearchPipeline(object):
         ext = cls()
         ext.settings = crawler.settings
 
-        basic_auth = {'username': ext.settings['ELASTICSEARCH_USERNAME'], 'password': ext.settings['ELASTICSEARCH_PASSWORD']}
+        basic_auth = {}
+
+        if (ext.settings['ELASTICSEARCH_USERNAME']):
+            basic_auth['username'] = ext.settings['ELASTICSEARCH_USERNAME']
+
+        if (ext.settings['ELASTICSEARCH_PASSWORD']):
+            basic_auth['password'] = ext.settings['ELASTICSEARCH_PASSWORD']
 
         if ext.settings['ELASTICSEARCH_PORT']:
             uri = "%s:%d" % (ext.settings['ELASTICSEARCH_SERVER'], ext.settings['ELASTICSEARCH_PORT'])
