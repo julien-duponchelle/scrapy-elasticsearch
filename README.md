@@ -26,6 +26,7 @@ Configure settings.py:
 Changelog
 =========
 
+* 0.6.1: Able to pull configs from spiders (in addition to reading from config file)
 * 0.6: Bug fix
 * 0.5: Abilit to persist object; Option to specify logging level
 * 0.4: Remove debug

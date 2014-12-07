@@ -2,7 +2,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(name='ScrapyElasticSearch',
-      version='0.6',
+      version='0.6.1',
       license='Apache License, Version 2.0',
       description='Scrapy pipeline which allow you to store multiple scrapy items in Elastic Search.',
       author='Michael Malocha, Julien Duponchelle',
