@@ -1,8 +1,16 @@
+import ast
+import re
 from distutils.core import setup
 from setuptools import find_packages
 
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
+
+with open('scrapyelasticsearch/__init__.py', 'rb') as f:
+    version = str(ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')).group(1)))
+
 setup(name='ScrapyElasticSearch',
-      version='0.6.1',
+      version=version,
       license='Apache License, Version 2.0',
       description='Scrapy pipeline which allow you to store multiple scrapy items in Elastic Search.',
       author='Michael Malocha, Julien Duponchelle',
