@@ -10,6 +10,7 @@ Install
 
 Configure settings.py:
 ----------------------
+::
 
    from scrapy import log
    
