@@ -4,38 +4,48 @@ Scrapy pipeline which allow you to store scrapy items in Elastic Search.
 
 Install
 =======
+::
+
    pip install ScrapyElasticSearch
 
 Configure settings.py:
 ----------------------
-    from scrapy import log
 
-    ITEM_PIPELINES = [
-	'scrapyelasticsearch.scrapyelasticsearch.ElasticSearchPipeline',
-    ]
-
-    ELASTICSEARCH_SERVER = 'localhost' # If not 'localhost' prepend 'http://'
-    ELASTICSEARCH_PORT = 9200 # If port 80 leave blank
-    ELASTICSEARCH_USERNAME = ''
-    ELASTICSEARCH_PASSWORD = ''
-    ELASTICSEARCH_INDEX = 'scrapy'
-    ELASTICSEARCH_TYPE = 'items'
-    ELASTICSEARCH_UNIQ_KEY = 'url'
-    ELASTICSEARCH_LOG_LEVEL= log.DEBUG
+   from scrapy import log
+   
+   ITEM_PIPELINES = [
+       'scrapyelasticsearch.scrapyelasticsearch.ElasticSearchPipeline',
+   ]
+   
+   ELASTICSEARCH_SERVER = 'localhost' # If not 'localhost' prepend 'http://'
+   ELASTICSEARCH_PORT = 9200 # If port 80 leave blank
+   ELASTICSEARCH_USERNAME = ''
+   ELASTICSEARCH_PASSWORD = ''
+   ELASTICSEARCH_INDEX = 'scrapy'
+   ELASTICSEARCH_TYPE = 'items'
+   ELASTICSEARCH_UNIQ_KEY = 'url'  # Custom uniqe key like
+   ELASTICSEARCH_LOG_LEVEL= log.DEBUG
 
 Changelog
 =========
 
+* 0.6.1: Able to pull configs from spiders (in addition to reading from config file)
+* 0.6: Bug fix
 * 0.5: Abilit to persist object; Option to specify logging level
 * 0.4: Remove debug
 * 0.3: Auth support
 * 0.2: Scrapy 0.18 support
 * 0.1: Initial release
 
+Issues
+=============
+If you find any bugs or have any questions, please report them to "issues" (https://github.com/knockrentals/scrapy-elasticsearch/issues)
+
 Contributors
 =============
-* Michael Malocha <michael@knockrentals.com>
-* Julien Duponchelle (http://github.com/noplay)
+* Michael Malocha (https://github.com/mjm159)
+* Ignacio Vazquez (https://github.com/ignaciovazquez)
+* Julien Duponchelle (https://github.com/noplay)
 * Jay Stewart (https://github.com/solidground)
 
 Licence
