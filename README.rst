@@ -10,7 +10,6 @@ Install
 
 Configure settings.py:
 ----------------------
-
 ::
 
    from scrapy import log
@@ -25,10 +24,8 @@ Configure settings.py:
    ELASTICSEARCH_PASSWORD = ''
    ELASTICSEARCH_INDEX = 'scrapy'
    ELASTICSEARCH_TYPE = 'items'
-   ELASTICSEARCH_UNIQ_KEY = 'url'
+   ELASTICSEARCH_UNIQ_KEY = 'url'  # Custom uniqe key like 'student_id'
    ELASTICSEARCH_LOG_LEVEL= log.DEBUG
-
-
 
 Changelog
 =========
