@@ -14,12 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Elastic Search Pipeline for scrappy expanded  with support for multiple items"""
+"""
+Elastic Search Pipeline for scrappy expanded  with support for multiple items
+"""
 
 from pyes import ES
-from scrapy import log
+import logging
 import hashlib
 import types
+
 
 class ElasticSearchPipeline(object):
     settings = None
@@ -39,7 +42,8 @@ class ElasticSearchPipeline(object):
             basic_auth['password'] = ext.settings['ELASTICSEARCH_PASSWORD']
 
         if ext.settings['ELASTICSEARCH_PORT']:
-            uri = "%s:%d" % (ext.settings['ELASTICSEARCH_SERVER'], ext.settings['ELASTICSEARCH_PORT'])
+            uri = "%s:%d" % (ext.settings['ELASTICSEARCH_SERVER'],
+                             ext.settings['ELASTICSEARCH_PORT'])
         else:
             uri = "%s" % (ext.settings['ELASTICSEARCH_SERVER'])
 
@@ -47,10 +51,12 @@ class ElasticSearchPipeline(object):
         return ext
 
     def index_item(self, item):
+        logger = logging.getLogger('elastic')
         if self.settings.get('ELASTICSEARCH_UNIQ_KEY'):
             uniq_key = self.settings.get('ELASTICSEARCH_UNIQ_KEY')
             local_id = hashlib.sha1(item[uniq_key]).hexdigest()
-            log.msg("Generated unique key %s" % local_id, level=self.settings.get('ELASTICSEARCH_LOG_LEVEL'))
+            logger.log(self.settings.get('ELASTICSEARCH_LOG_LEVEL'),
+                       "Generated unique key %s" % local_id,)
             op_type = 'index'
         else:
             op_type = 'create'
@@ -61,14 +67,16 @@ class ElasticSearchPipeline(object):
                       id=local_id,
                       op_type=op_type)
 
-
     def process_item(self, item, spider):
-        if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
+        if isinstance(item, types.GeneratorType) or isinstance(item,
+                                                               types.ListType):
             for each in item:
                 self.process_item(each, spider)
         else:
+            logger = logging.getLogger('elastic')
+
             self.index_item(item)
-            log.msg("Item sent to Elastic Search %s" %
-                    (self.settings.get('ELASTICSEARCH_INDEX')),
-                    level=self.settings.get('ELASTICSEARCH_LOG_LEVEL'), spider=spider)
+            logger.log(self.settings.get('ELASTICSEARCH_LOG_LEVEL'),
+                       "Item sent to Elastic Search %s"
+                       % (self.settings.get('ELASTICSEARCH_INDEX')))
             return item
