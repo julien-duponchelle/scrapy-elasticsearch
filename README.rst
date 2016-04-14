@@ -4,20 +4,25 @@ Scrapy pipeline which allow you to store scrapy items in Elastic Search.
 
 Install
 =======
+::
+
    pip install ScrapyElasticSearch
 
 Configure settings.py:
 ----------------------
-    from scrapy import log
+::
 
-    ITEM_PIPELINES = [
-      'scrapyelasticsearch.ElasticSearchPipeline',
-    ]
+   from scrapy import log
 
-    ELASTICSEARCH_SERVER = 'localhost'
-    ELASTICSEARCH_INDEX = 'scrapy'
-    ELASTICSEARCH_TYPE = 'items'
-    ELASTICSEARCH_UNIQ_KEY = 'url'
+   ITEM_PIPELINES = [
+       'scrapyelasticsearch.scrapyelasticsearch.ElasticSearchPipeline',
+   ]
+
+   ELASTICSEARCH_SERVER = 'localhost' # If not 'localhost' prepend 'http://'
+   ELASTICSEARCH_PORT = 9200 # If port 80 leave blank
+   ELASTICSEARCH_INDEX = 'scrapy'
+   ELASTICSEARCH_TYPE = 'items'
+   ELASTICSEARCH_UNIQ_KEY = 'url'  # Custom uniqe key like 'student_id'
 
 # TODO:
 Provide more example usage and sample app
