@@ -14,18 +14,18 @@ Configure settings.py:
       'scrapyelasticsearch.ElasticSearchPipeline',
     ]
 
-    ELASTICSEARCH_SERVER = 'localhost' # If not 'localhost' prepend 'http://'
-    ELASTICSEARCH_PORT = 9200 # If port 80 leave blank
-    ELASTICSEARCH_USERNAME = ''
-    ELASTICSEARCH_PASSWORD = ''
+    ELASTICSEARCH_SERVER = 'localhost'
     ELASTICSEARCH_INDEX = 'scrapy'
     ELASTICSEARCH_TYPE = 'items'
     ELASTICSEARCH_UNIQ_KEY = 'url'
-    ELASTICSEARCH_LOG_LEVEL= log.DEBUG
+
+# TODO:
+Provide more example usage and sample app
 
 Changelog
 =========
 
+* 0.7: TBD
 * 0.6.1: Able to pull configs from spiders (in addition to reading from config file)
 * 0.6: Bug fix
 * 0.5: Abilit to persist object; Option to specify logging level

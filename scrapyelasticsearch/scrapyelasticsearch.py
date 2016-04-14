@@ -16,8 +16,8 @@
 
 """Elastic Search Pipeline for scrappy expanded  with support for multiple items"""
 
-from pyes import ES
-from scrapy import log
+from elasticsearch import Elasticsearch
+import logging
 import hashlib
 import types
 
@@ -30,37 +30,33 @@ class ElasticSearchPipeline(object):
         ext = cls()
         ext.settings = crawler.settings
 
-        basic_auth = {}
+        es_servers = ext.settings['ELASTICSEARCH_SERVER']
+        es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
-        if (ext.settings['ELASTICSEARCH_USERNAME']):
-            basic_auth['username'] = ext.settings['ELASTICSEARCH_USERNAME']
+        es_port = ext.settings['ELASTICSEARCH_PORT']
 
-        if (ext.settings['ELASTICSEARCH_PASSWORD']):
-            basic_auth['password'] = ext.settings['ELASTICSEARCH_PASSWORD']
-
-        if ext.settings['ELASTICSEARCH_PORT']:
-            uri = "%s:%d" % (ext.settings['ELASTICSEARCH_SERVER'], ext.settings['ELASTICSEARCH_PORT'])
-        else:
-            uri = "%s" % (ext.settings['ELASTICSEARCH_SERVER'])
-
-        ext.es = ES([uri], basic_auth=basic_auth)
+        ext.es = Elasticsearch(hosts=es_servers)
         return ext
 
     def index_item(self, item):
         if self.settings.get('ELASTICSEARCH_UNIQ_KEY'):
             uniq_key = self.settings.get('ELASTICSEARCH_UNIQ_KEY')
-            local_id = hashlib.sha1(item[uniq_key]).hexdigest()
-            log.msg("Generated unique key %s" % local_id, level=self.settings.get('ELASTICSEARCH_LOG_LEVEL'))
-            op_type = 'index'
-        else:
-            op_type = 'create'
-            local_id = item['id']
-        self.es.index(dict(item),
-                      self.settings.get('ELASTICSEARCH_INDEX'),
-                      self.settings.get('ELASTICSEARCH_TYPE'),
-                      id=local_id,
-                      op_type=op_type)
+            if isinstance(item[uniq_key], str):
+                unique_key = unique_key
+            elif isinstance(item[uniq_key], list) and len(item[uniq_key]) == 1:
+                unique_key = item[uniq_key][0]
+            else:
+                raise Exception('unique key must be str or list')
 
+            local_id = hashlib.sha1(unique_key).hexdigest()
+            logging.debug("Generated unique key %s" % local_id)
+        else:
+            local_id = item['id']
+
+        self.es.index(index=self.settings.get('ELASTICSEARCH_INDEX'),
+                      doc_type=self.settings.get('ELASTICSEARCH_TYPE'),
+                      id=local_id,
+                      body=dict(item))
 
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
@@ -68,7 +64,5 @@ class ElasticSearchPipeline(object):
                 self.process_item(each, spider)
         else:
             self.index_item(item)
-            log.msg("Item sent to Elastic Search %s" %
-                    (self.settings.get('ELASTICSEARCH_INDEX')),
-                    level=self.settings.get('ELASTICSEARCH_LOG_LEVEL'), spider=spider)
+            logging.debug("Item sent to Elastic Search %s" % self.settings.get('ELASTICSEARCH_INDEX'))
             return item
