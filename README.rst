@@ -11,9 +11,6 @@ Install
 Usage (Configure settings.py:)
 ----------------------
 ::
-
-   from scrapy import log
-
    ITEM_PIPELINES = [
        'scrapyelasticsearch.scrapyelasticsearch.ElasticSearchPipeline',
    ]
@@ -31,7 +28,7 @@ Examples:
 
 ELASTICSEARCH_INDEX - elastic search index
 ELASTICSEARCH_TYPE - elastic search type
-ELASTICSEARCH_UNIQ_KEY - optional field. id (in the model) is used if not specified, or you can use an unique key in the model (see your items.py)
+ELASTICSEARCH_UNIQ_KEY - optional field. id (in the model) is used by default. You can use any unique field in your model (see items.py), string or list is acceptable. If you pass in a list, the 1st element will be used.
 
 
 Here is an example app (dirbot https://github.com/jayzeng/dirbot) in case you are still confused.

@@ -33,8 +33,6 @@ class ElasticSearchPipeline(object):
         es_servers = ext.settings['ELASTICSEARCH_SERVERS']
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
-        es_port = ext.settings['ELASTICSEARCH_PORT']
-
         ext.es = Elasticsearch(hosts=es_servers)
         return ext
 
