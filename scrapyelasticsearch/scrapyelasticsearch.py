@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Elastic Search Pipeline for scrappy expanded  with support for multiple items"""
+"""Elastic Search Pipeline for scrappy expanded with support for multiple items"""
 
 from elasticsearch import Elasticsearch
 import logging
@@ -30,7 +30,7 @@ class ElasticSearchPipeline(object):
         ext = cls()
         ext.settings = crawler.settings
 
-        es_servers = ext.settings['ELASTICSEARCH_SERVER']
+        es_servers = ext.settings['ELASTICSEARCH_SERVERS']
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
         es_port = ext.settings['ELASTICSEARCH_PORT']
