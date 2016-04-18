@@ -11,20 +11,27 @@ Install
 Usage (Configure settings.py:)
 ----------------------
 ::
-
-   from scrapy import log
-
    ITEM_PIPELINES = [
        'scrapyelasticsearch.scrapyelasticsearch.ElasticSearchPipeline',
    ]
 
-   ELASTICSEARCH_SERVERS = 'localhost' # If not 'localhost' prepend 'http://'
-   ELASTICSEARCH_PORT = 9200 # If port 80 leave blank
+   ELASTICSEARCH_SERVERS = ['localhost']
    ELASTICSEARCH_INDEX = 'scrapy'
    ELASTICSEARCH_TYPE = 'items'
    ELASTICSEARCH_UNIQ_KEY = 'url'  # Custom uniqe key
 
-Here is an example app (dirbot ) in case you are still confused.
+ELASTICSEARCH_SERVERS - list of hosts or string (single host). Host format: protocl://username:password@host:port.
+Examples:
+    - ['http://username:password@elasticsearch.example.com:9200']
+    - ['http://elasticsearch.example.com:9200']
+    - 'https://elasticsearch.example.com:9200'
+
+ELASTICSEARCH_INDEX - elastic search index
+ELASTICSEARCH_TYPE - elastic search type
+ELASTICSEARCH_UNIQ_KEY - optional field. id (in the model) is used by default. You can use any unique field in your model (see items.py), string or list is acceptable. If you pass in a list, the 1st element will be used.
+
+
+Here is an example app (dirbot https://github.com/jayzeng/dirbot) in case you are still confused.
 
 Dependencies
 =========
@@ -36,6 +43,7 @@ Changelog
 * 0.7: A number of backwards incompatibility changes are introduced:
     - Changed ELASTICSEARCH_SERVER to ELASTICSEARCH_SERVERS
     - ELASTICSEARCH_SERVERS accepts string or list
+    - ELASTICSEARCH_PORT is removed, you can specify it in the url
     - ELASTICSEARCH_USERNAME and ELASTICSEARCH_PASSWORD are removed. You can use this format ELASTICSEARCH_SERVERS=['http://username:password@host:port']
     - Changed scrapy.log to logging as scrapy now uses the logging module
 
