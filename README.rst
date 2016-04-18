@@ -28,7 +28,7 @@ Examples:
 
 ELASTICSEARCH_INDEX - elastic search index
 ELASTICSEARCH_TYPE - elastic search type
-ELASTICSEARCH_UNIQ_KEY - optional field. id (in the model) is used by default. You can use any unique field in your model (see items.py), string or list is acceptable. If you pass in a list, the 1st element will be used.
+ELASTICSEARCH_UNIQ_KEY - unique key in string (must be a field declared in model, see items.py)
 
 
 Here is an example app (dirbot https://github.com/jayzeng/dirbot) in case you are still confused.
