@@ -14,69 +14,67 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Elastic Search Pipeline for scrappy expanded  with support for multiple items
-"""
+"""Elastic Search Pipeline for scrappy expanded with support for multiple items"""
 
-from pyes import ES
+from elasticsearch import Elasticsearch
 import logging
 import hashlib
 import types
 
+class InvalidSettingsException(Exception):
+    pass
 
 class ElasticSearchPipeline(object):
     settings = None
     es = None
 
     @classmethod
+    def validate_settings(cls, settings):
+        def validate_setting(setting_key):
+            if settings[setting_key] is None:
+                raise InvalidSettingsException('%s is not defined in settings.py' % setting_key)
+
+        required_settings = {'ELASTICSEARCH_SERVERS', 'ELASTICSEARCH_UNIQ_KEY', 'ELASTICSEARCH_INDEX', 'ELASTICSEARCH_TYPE'}
+
+        for required_setting in required_settings:
+            validate_setting(required_setting)
+
+    @classmethod
     def from_crawler(cls, crawler):
         ext = cls()
         ext.settings = crawler.settings
 
-        basic_auth = {}
+        cls.validate_settings(ext.settings)
 
-        if (ext.settings['ELASTICSEARCH_USERNAME']):
-            basic_auth['username'] = ext.settings['ELASTICSEARCH_USERNAME']
+        es_servers = ext.settings['ELASTICSEARCH_SERVERS']
+        es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
-        if (ext.settings['ELASTICSEARCH_PASSWORD']):
-            basic_auth['password'] = ext.settings['ELASTICSEARCH_PASSWORD']
-
-        if ext.settings['ELASTICSEARCH_PORT']:
-            uri = "%s:%d" % (ext.settings['ELASTICSEARCH_SERVER'],
-                             ext.settings['ELASTICSEARCH_PORT'])
-        else:
-            uri = "%s" % (ext.settings['ELASTICSEARCH_SERVER'])
-
-        ext.es = ES([uri], basic_auth=basic_auth)
+        ext.es = Elasticsearch(hosts=es_servers)
         return ext
 
+    def get_unique_key(self, unique_key):
+        if not isinstance(unique_key, str):
+            raise Exception('unique key must be str')
+
+        return unique_key
+
     def index_item(self, item):
-        logger = logging.getLogger('elastic')
-        if self.settings.get('ELASTICSEARCH_UNIQ_KEY'):
-            uniq_key = self.settings.get('ELASTICSEARCH_UNIQ_KEY')
-            local_id = hashlib.sha1(item[uniq_key]).hexdigest()
-            logger.log(self.settings.get('ELASTICSEARCH_LOG_LEVEL'),
-                       "Generated unique key %s" % local_id,)
-            op_type = 'index'
-        else:
-            op_type = 'create'
-            local_id = item['id']
-        self.es.index(dict(item),
-                      self.settings.get('ELASTICSEARCH_INDEX'),
-                      self.settings.get('ELASTICSEARCH_TYPE'),
+        item_unique_key = item[self.settings.get('ELASTICSEARCH_UNIQ_KEY')]
+        unique_key = self.get_unique_key(item_unique_key)
+
+        local_id = hashlib.sha1(unique_key).hexdigest()
+        logging.debug("Generated unique key %s" % local_id)
+
+        self.es.index(index=self.settings.get('ELASTICSEARCH_INDEX'),
+                      doc_type=self.settings.get('ELASTICSEARCH_TYPE'),
                       id=local_id,
-                      op_type=op_type)
+                      body=dict(item))
 
     def process_item(self, item, spider):
-        if isinstance(item, types.GeneratorType) or isinstance(item,
-                                                               types.ListType):
+        if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
             for each in item:
                 self.process_item(each, spider)
         else:
-            logger = logging.getLogger('elastic')
-
             self.index_item(item)
-            logger.log(self.settings.get('ELASTICSEARCH_LOG_LEVEL'),
-                       "Item sent to Elastic Search %s"
-                       % (self.settings.get('ELASTICSEARCH_INDEX')))
+            logging.debug("Item sent to Elastic Search %s" % self.settings.get('ELASTICSEARCH_INDEX'))
             return item

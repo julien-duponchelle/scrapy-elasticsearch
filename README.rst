@@ -1,6 +1,6 @@
 Description
 ===========
-Scrapy pipeline which allow you to store scrapy items in Elastic Search.
+Scrapy pipeline which allows you to store scrapy items in Elastic Search.
 
 Install
 =======
@@ -8,27 +8,44 @@ Install
 
    pip install ScrapyElasticSearch
 
-Configure settings.py:
+Usage (Configure settings.py:)
 ----------------------
 ::
-
-   from scrapy import log
-   
    ITEM_PIPELINES = [
        'scrapyelasticsearch.scrapyelasticsearch.ElasticSearchPipeline',
    ]
-   
-   ELASTICSEARCH_SERVER = 'localhost' # If not 'localhost' prepend 'http://'
-   ELASTICSEARCH_PORT = 9200 # If port 80 leave blank
-   ELASTICSEARCH_USERNAME = ''
-   ELASTICSEARCH_PASSWORD = ''
+
+   ELASTICSEARCH_SERVERS = ['localhost']
    ELASTICSEARCH_INDEX = 'scrapy'
    ELASTICSEARCH_TYPE = 'items'
-   ELASTICSEARCH_UNIQ_KEY = 'url'  # Custom uniqe key like 'student_id'
-   ELASTICSEARCH_LOG_LEVEL= log.DEBUG
+   ELASTICSEARCH_UNIQ_KEY = 'url'  # Custom uniqe key
+
+ELASTICSEARCH_SERVERS - list of hosts or string (single host). Host format: protocl://username:password@host:port.
+Examples:
+    - ['http://username:password@elasticsearch.example.com:9200']
+    - ['http://elasticsearch.example.com:9200']
+    - 'https://elasticsearch.example.com:9200'
+
+ELASTICSEARCH_INDEX - elastic search index
+ELASTICSEARCH_TYPE - elastic search type
+ELASTICSEARCH_UNIQ_KEY - unique key in string (must be a field declared in model, see items.py)
+
+
+Here is an example app (dirbot https://github.com/jayzeng/dirbot) in case you are still confused.
+
+Dependencies
+=========
+See requirements.txt
 
 Changelog
 =========
+
+* 0.7: A number of backwards incompatibility changes are introduced:
+    - Changed ELASTICSEARCH_SERVER to ELASTICSEARCH_SERVERS
+    - ELASTICSEARCH_SERVERS accepts string or list
+    - ELASTICSEARCH_PORT is removed, you can specify it in the url
+    - ELASTICSEARCH_USERNAME and ELASTICSEARCH_PASSWORD are removed. You can use this format ELASTICSEARCH_SERVERS=['http://username:password@host:port']
+    - Changed scrapy.log to logging as scrapy now uses the logging module
 
 * 0.6.1: Able to pull configs from spiders (in addition to reading from config file)
 * 0.6: Bug fix
@@ -44,6 +61,7 @@ If you find any bugs or have any questions, please report them to "issues" (http
 
 Contributors
 =============
+* Jay Zeng (Maintainer) (https://github.com/jayzeng)
 * Michael Malocha (https://github.com/mjm159)
 * Ignacio Vazquez (https://github.com/ignaciovazquez)
 * Julien Duponchelle (https://github.com/noplay)
