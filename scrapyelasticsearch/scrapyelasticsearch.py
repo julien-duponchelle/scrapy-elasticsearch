@@ -69,8 +69,8 @@ class ElasticSearchPipeline(object):
         logging.debug('Generated unique key %s' % item_id)
 
         index_action = {
-            '_index': self.settings.get('ELASTICSEARCH_INDEX'),
-            '_type': self.settings.get('ELASTICSEARCH_TYPE'),
+            '_index': self.settings['ELASTICSEARCH_INDEX'],
+            '_type': self.settings['ELASTICSEARCH_TYPE'],
             '_id': item_id,
             '_source': dict(item)
         }
@@ -83,7 +83,7 @@ class ElasticSearchPipeline(object):
                 self.process_item(each, spider)
         else:
             self.index_item(item)
-            logging.debug('Item sent to Elastic Search %s' % self.settings.get('ELASTICSEARCH_INDEX'))
+            logging.debug('Item sent to Elastic Search %s' % self.settings['ELASTICSEARCH_INDEX'])
             return item
 
     def close_spider(self, spider):
