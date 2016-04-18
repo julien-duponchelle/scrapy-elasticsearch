@@ -21,37 +21,49 @@ import logging
 import hashlib
 import types
 
+class InvalidSettingsException(Exception):
+    pass
+
 class ElasticSearchPipeline(object):
     settings = None
     es = None
+
+    @classmethod
+    def validate_settings(cls, settings):
+        def validate_setting(setting_key):
+            if settings[setting_key] is None:
+                raise InvalidSettingsException('%s is not defined in settings.py' % setting_key)
+
+        required_settings = {'ELASTICSEARCH_SERVERS', 'ELASTICSEARCH_UNIQ_KEY', 'ELASTICSEARCH_INDEX', 'ELASTICSEARCH_TYPE'}
+
+        for required_setting in required_settings:
+            validate_setting(required_setting)
 
     @classmethod
     def from_crawler(cls, crawler):
         ext = cls()
         ext.settings = crawler.settings
 
+        cls.validate_settings(ext.settings)
+
         es_servers = ext.settings['ELASTICSEARCH_SERVERS']
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
-
-        es_port = ext.settings['ELASTICSEARCH_PORT']
 
         ext.es = Elasticsearch(hosts=es_servers)
         return ext
 
-    def index_item(self, item):
-        if self.settings.get('ELASTICSEARCH_UNIQ_KEY'):
-            uniq_key = self.settings.get('ELASTICSEARCH_UNIQ_KEY')
-            if isinstance(item[uniq_key], str):
-                unique_key = unique_key
-            elif isinstance(item[uniq_key], list) and len(item[uniq_key]) == 1:
-                unique_key = item[uniq_key][0]
-            else:
-                raise Exception('unique key must be str or list')
+    def get_unique_key(self, unique_key):
+        if not isinstance(unique_key, str):
+            raise Exception('unique key must be str')
 
-            local_id = hashlib.sha1(unique_key).hexdigest()
-            logging.debug("Generated unique key %s" % local_id)
-        else:
-            local_id = item['id']
+        return unique_key
+
+    def index_item(self, item):
+        item_unique_key = item[self.settings.get('ELASTICSEARCH_UNIQ_KEY')]
+        unique_key = self.get_unique_key(item_unique_key)
+
+        local_id = hashlib.sha1(unique_key).hexdigest()
+        logging.debug("Generated unique key %s" % local_id)
 
         self.es.index(index=self.settings.get('ELASTICSEARCH_INDEX'),
                       doc_type=self.settings.get('ELASTICSEARCH_TYPE'),
