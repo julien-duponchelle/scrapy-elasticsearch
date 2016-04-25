@@ -77,6 +77,10 @@ class ElasticSearchPipeline(object):
 
         self.items_buffer.append(index_action)
 
+        if len(self.items_buffer) == self.settings.get('ELASTICSEARCH_BUFFER_LENGTH'):
+            helpers.bulk(self.es, self.items_buffer)
+            self.items_buffer = []
+
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
             for each in item:
@@ -85,6 +89,3 @@ class ElasticSearchPipeline(object):
             self.index_item(item)
             logging.debug('Item sent to Elastic Search %s' % self.settings['ELASTICSEARCH_INDEX'])
             return item
-
-    def close_spider(self, spider):
-        helpers.bulk(self.es, self.items_buffer)
