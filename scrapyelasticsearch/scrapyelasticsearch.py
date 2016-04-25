@@ -16,7 +16,7 @@
 
 """Elastic Search Pipeline for scrappy expanded with support for multiple items"""
 
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, helpers
 import logging
 import hashlib
 import types
@@ -27,6 +27,7 @@ class InvalidSettingsException(Exception):
 class ElasticSearchPipeline(object):
     settings = None
     es = None
+    items_buffer = []
 
     @classmethod
     def validate_settings(cls, settings):
@@ -53,22 +54,32 @@ class ElasticSearchPipeline(object):
         return ext
 
     def get_unique_key(self, unique_key):
-        if not isinstance(unique_key, str):
+        if isinstance(unique_key, list):
+            unique_key = unique_key[0]
+        elif not isinstance(unique_key, str):
             raise Exception('unique key must be str')
 
         return unique_key
 
     def index_item(self, item):
-        item_unique_key = item[self.settings.get('ELASTICSEARCH_UNIQ_KEY')]
+        item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
         unique_key = self.get_unique_key(item_unique_key)
 
-        local_id = hashlib.sha1(unique_key).hexdigest()
-        logging.debug("Generated unique key %s" % local_id)
+        item_id = hashlib.sha1(unique_key).hexdigest()
+        logging.debug('Generated unique key %s' % item_id)
 
-        self.es.index(index=self.settings.get('ELASTICSEARCH_INDEX'),
-                      doc_type=self.settings.get('ELASTICSEARCH_TYPE'),
-                      id=local_id,
-                      body=dict(item))
+        index_action = {
+            '_index': self.settings['ELASTICSEARCH_INDEX'],
+            '_type': self.settings['ELASTICSEARCH_TYPE'],
+            '_id': item_id,
+            '_source': dict(item)
+        }
+
+        self.items_buffer.append(index_action)
+
+        if len(self.items_buffer) == self.settings.get('ELASTICSEARCH_BUFFER_LENGTH'):
+            helpers.bulk(self.es, self.items_buffer)
+            self.items_buffer = []
 
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
@@ -76,5 +87,5 @@ class ElasticSearchPipeline(object):
                 self.process_item(each, spider)
         else:
             self.index_item(item)
-            logging.debug("Item sent to Elastic Search %s" % self.settings.get('ELASTICSEARCH_INDEX'))
+            logging.debug('Item sent to Elastic Search %s' % self.settings['ELASTICSEARCH_INDEX'])
             return item
