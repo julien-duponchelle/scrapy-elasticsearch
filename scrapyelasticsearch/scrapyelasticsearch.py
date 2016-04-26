@@ -35,7 +35,7 @@ class ElasticSearchPipeline(object):
             if settings[setting_key] is None:
                 raise InvalidSettingsException('%s is not defined in settings.py' % setting_key)
 
-        required_settings = {'ELASTICSEARCH_SERVERS', 'ELASTICSEARCH_UNIQ_KEY', 'ELASTICSEARCH_INDEX', 'ELASTICSEARCH_TYPE'}
+        required_settings = {'ELASTICSEARCH_SERVERS', 'ELASTICSEARCH_INDEX', 'ELASTICSEARCH_TYPE'}
 
         for required_setting in required_settings:
             validate_setting(required_setting)
@@ -50,7 +50,7 @@ class ElasticSearchPipeline(object):
         es_servers = ext.settings['ELASTICSEARCH_SERVERS']
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
-        ext.es = Elasticsearch(hosts=es_servers)
+        ext.es = Elasticsearch(hosts=es_servers, timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT',60))
         return ext
 
     def get_unique_key(self, unique_key):
@@ -62,24 +62,28 @@ class ElasticSearchPipeline(object):
         return unique_key
 
     def index_item(self, item):
-        item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
-        unique_key = self.get_unique_key(item_unique_key)
-
-        item_id = hashlib.sha1(unique_key).hexdigest()
-        logging.debug('Generated unique key %s' % item_id)
 
         index_action = {
             '_index': self.settings['ELASTICSEARCH_INDEX'],
             '_type': self.settings['ELASTICSEARCH_TYPE'],
-            '_id': item_id,
             '_source': dict(item)
         }
 
+        if self.settings['ELASTICSEARCH_UNIQ_KEY'] is not None:
+            item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
+            unique_key = self.get_unique_key(item_unique_key)
+            item_id = hashlib.sha1(unique_key).hexdigest()
+            index_action['_id'] = item_id
+            logging.debug('Generated unique key %s' % item_id)
+
         self.items_buffer.append(index_action)
 
-        if len(self.items_buffer) == self.settings.get('ELASTICSEARCH_BUFFER_LENGTH'):
-            helpers.bulk(self.es, self.items_buffer)
+        if len(self.items_buffer) == self.settings.get('ELASTICSEARCH_BUFFER_LENGTH',9999):
+            self.send_items()
             self.items_buffer = []
+
+    def send_items(self):
+        helpers.bulk(self.es, self.items_buffer)
 
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
@@ -89,3 +93,8 @@ class ElasticSearchPipeline(object):
             self.index_item(item)
             logging.debug('Item sent to Elastic Search %s' % self.settings['ELASTICSEARCH_INDEX'])
             return item
+
+    def close_spider(self, spider):
+        if len(self.items_buffer):
+            self.send_items()
+
