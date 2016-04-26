@@ -67,6 +67,7 @@ Contributors
 * Ignacio Vazquez (https://github.com/ignaciovazquez)
 * Julien Duponchelle (https://github.com/noplay)
 * Jay Stewart (https://github.com/solidground)
+* Alessio Cimarelli (https://github.com/jenkin)
 
 Licence
 =======
