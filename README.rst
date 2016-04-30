@@ -28,7 +28,7 @@ Examples:
 
 ELASTICSEARCH_INDEX - elastic search index
 ELASTICSEARCH_TYPE - elastic search type
-ELASTICSEARCH_UNIQ_KEY - unique key in string (must be a field declared in model, see items.py)
+ELASTICSEARCH_UNIQ_KEY - optional field, unique key in string (must be a field declared in model, see items.py)
 ELASTICSEARCH_BUFFER_LENGTH - optional field, number of items to be processed during each bulk insertion to Elasticsearch. Default size is 500.
 
 
