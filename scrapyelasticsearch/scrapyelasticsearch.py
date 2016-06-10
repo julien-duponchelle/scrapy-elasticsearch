@@ -16,6 +16,7 @@
 
 """Elastic Search Pipeline for scrappy expanded with support for multiple items"""
 
+from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
 import logging
 import hashlib
@@ -63,8 +64,14 @@ class ElasticSearchPipeline(object):
 
     def index_item(self, item):
 
+        index_name = self.settings['ELASTICSEARCH_INDEX']
+        index_suffix_format = self.settings.get('ELASTICSEARCH_INDEX_DATE_FORMAT', None)
+
+        if index_suffix_format:
+            index_name += "-" + datetime.strftime(datetime.now(),index_suffix_format)
+
         index_action = {
-            '_index': self.settings['ELASTICSEARCH_INDEX'],
+            '_index': index_name,
             '_type': self.settings['ELASTICSEARCH_TYPE'],
             '_source': dict(item)
         }
@@ -78,7 +85,7 @@ class ElasticSearchPipeline(object):
 
         self.items_buffer.append(index_action)
 
-        if len(self.items_buffer) == self.settings.get('ELASTICSEARCH_BUFFER_LENGTH',9999):
+        if len(self.items_buffer) == self.settings.get('ELASTICSEARCH_BUFFER_LENGTH', 500):
             self.send_items()
             self.items_buffer = []
 
