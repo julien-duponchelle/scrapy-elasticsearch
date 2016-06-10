@@ -22,6 +22,9 @@ import logging
 import hashlib
 import types
 
+from transportNTLM import TransportNTLM
+
+
 class InvalidSettingsException(Exception):
     pass
 
@@ -51,7 +54,15 @@ class ElasticSearchPipeline(object):
         es_servers = ext.settings['ELASTICSEARCH_SERVERS']
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
-        ext.es = Elasticsearch(hosts=es_servers, timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT',60))
+        authType = ext.settings['ELASTICSEARCH_AUTH']
+        if authType == 'NTLM':
+            ext.es = Elasticsearch(hosts=es_servers,
+                                   transport_class=TransportNTLM,
+                                   ntlm_user= ext.settings['ELASTICSEARCH_USERNAME'],
+                                   ntlm_pass= ext.settings['ELASTICSEARCH_PASSWORD'],
+                                   timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT',60))
+        else :
+            ext.es = Elasticsearch(hosts=es_servers, timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT', 60))
         return ext
 
     def get_unique_key(self, unique_key):
