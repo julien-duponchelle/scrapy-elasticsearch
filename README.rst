@@ -33,7 +33,7 @@ ELASTICSEARCH_TYPE - elastic search type
 ELASTICSEARCH_UNIQ_KEY - optional field, unique key in string (must be a field declared in model, see items.py)
 ELASTICSEARCH_BUFFER_LENGTH - optional field, number of items to be processed during each bulk insertion to Elasticsearch. Default size is 500.
 ELASTICSEARCH_AUTH  - optional field, set to 'NTLM' to use NTLM authentification
-ELASTICSEARCH_USERNAME - optional field, set to 'DOMAIN\username', only used with NLTM authentification 
+ELASTICSEARCH_USERNAME - optional field, set to 'DOMAIN\username', only used with NLTM authentification
 ELASTICSEARCH_PASSWORD - optional field, set to your 'password', only used with NLTM authentification
 
 Here is an example app (dirbot https://github.com/jayzeng/dirbot) in case you are still confused.
@@ -76,7 +76,8 @@ Contributors
 * Jay Stewart (https://github.com/solidground)
 * Alessio Cimarelli (https://github.com/jenkin)
 * Doug Parker (https://github.com/dougiep16)
-* Jean-Sébastien Gervais (https://github.com/jsgervais)
+* Jean-Sebastien Gervais (https://github.com/jsgervais)
+
 
 Licence
 =======
