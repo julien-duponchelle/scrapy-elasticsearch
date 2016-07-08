@@ -13,7 +13,7 @@ pycparser==2.14
 pyOpenSSL==16.0.0
 queuelib==1.4.2
 requests==2.10.0
-requests-ntlm==0.2.0
+requests_ntlm==0.2.0
 Scrapy==1.0.5
 service-identity==16.0.0
 six==1.10.0
