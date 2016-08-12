@@ -28,14 +28,18 @@ Examples:
     - ['http://elasticsearch.example.com:9200']
     - 'https://elasticsearch.example.com:9200'
 
-ELASTICSEARCH_INDEX - elastic search index
-ELASTICSEARCH_INDEX_DATE_FORMAT - the format for date suffix for the index, see python datetime.strftime for format. Default is no date suffix.
-ELASTICSEARCH_TYPE - elastic search type
-ELASTICSEARCH_UNIQ_KEY - optional field, unique key in string (must be a field declared in model, see items.py)
-ELASTICSEARCH_BUFFER_LENGTH - optional field, number of items to be processed during each bulk insertion to Elasticsearch. Default size is 500.
-ELASTICSEARCH_AUTH  - optional field, set to 'NTLM' to use NTLM authentification
-ELASTICSEARCH_USERNAME - optional field, set to 'DOMAIN\username', only used with NLTM authentification
-ELASTICSEARCH_PASSWORD - optional field, set to your 'password', only used with NLTM authentification
+Available parameters (in settings.py:)
+----------------------
+::
+
+   ELASTICSEARCH_INDEX - elastic search index
+   ELASTICSEARCH_INDEX_DATE_FORMAT - the format for date suffix for the index, see python datetime.strftime for format. Default is no date suffix.
+   ELASTICSEARCH_TYPE - elastic search type
+   ELASTICSEARCH_UNIQ_KEY - optional field, unique key in string (must be a field declared in model, see items.py)
+   ELASTICSEARCH_BUFFER_LENGTH - optional field, number of items to be processed during each bulk insertion to Elasticsearch. Default size is 500.
+   ELASTICSEARCH_AUTH  - optional field, set to 'NTLM' to use NTLM authentification
+   ELASTICSEARCH_USERNAME - optional field, set to 'DOMAIN\username', only used with NLTM authentification
+   ELASTICSEARCH_PASSWORD - optional field, set to your 'password', only used with NLTM authentification
 
 Here is an example app (dirbot https://github.com/jayzeng/dirbot) in case you are still confused.
 
