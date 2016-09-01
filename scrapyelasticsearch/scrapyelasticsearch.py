@@ -18,7 +18,7 @@
 
 from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
-from scrapyelasticsearch.transportNTLM import TransportNTLM
+from .transportNTLM import TransportNTLM
 
 import logging
 import hashlib
