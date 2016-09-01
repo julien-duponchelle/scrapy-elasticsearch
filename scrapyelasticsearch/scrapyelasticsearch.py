@@ -18,15 +18,16 @@
 
 from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
+from scrapyelasticsearch.transportNTLM import TransportNTLM
+
 import logging
 import hashlib
 import types
 
-from .transportNTLM import TransportNTLM
-
 
 class InvalidSettingsException(Exception):
     pass
+
 
 class ElasticSearchPipeline(object):
     settings = None
