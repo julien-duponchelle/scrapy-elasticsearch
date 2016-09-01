@@ -1,13 +1,12 @@
-import time
 from itertools import chain
-
 from elasticsearch.connection import RequestsHttpConnection
 from elasticsearch.connection_pool import ConnectionPool, DummyConnectionPool
 from elasticsearch.serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from elasticsearch.exceptions import ConnectionError, TransportError, SerializationError, \
                         ConnectionTimeout, ImproperlyConfigured
-import requests
 from requests_ntlm import HttpNtlmAuth
+import time
+
 
 def get_host_info(node_info, host):
     """
@@ -31,6 +30,7 @@ def get_host_info(node_info, host):
         attrs.get('master', 'true') == 'true'):
         return None
     return host
+
 
 class TransportNTLM(object):
     """
@@ -176,7 +176,7 @@ class TransportNTLM(object):
 
     def get_connection(self):
         """
-        Retreive a :class:`~elasticsearch.Connection` instance from the
+        Retrieve a :class:`~elasticsearch.Connection` instance from the
         :class:`~elasticsearch.ConnectionPool` instance.
         """
         if self.sniffer_timeout:
@@ -220,7 +220,6 @@ class TransportNTLM(object):
             raise
 
         return list(node_info['nodes'].values())
-
 
     def sniff_hosts(self, initial=False):
         """
