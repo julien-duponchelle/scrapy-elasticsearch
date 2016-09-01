@@ -96,7 +96,7 @@ class ElasticSearchPipeline(object):
 
         self.items_buffer.append(index_action)
 
-        if len(self.items_buffer) == self.settings.get('ELASTICSEARCH_BUFFER_LENGTH', 500):
+        if len(self.items_buffer) >= self.settings.get('ELASTICSEARCH_BUFFER_LENGTH', 500):
             self.send_items()
             self.items_buffer = []
 
