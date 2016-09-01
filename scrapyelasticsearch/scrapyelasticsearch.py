@@ -22,7 +22,7 @@ import logging
 import hashlib
 import types
 
-from transportNTLM import TransportNTLM
+from .transportNTLM import TransportNTLM
 
 
 class InvalidSettingsException(Exception):

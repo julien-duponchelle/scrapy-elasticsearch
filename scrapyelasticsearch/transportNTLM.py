@@ -1,13 +1,12 @@
-import time
 from itertools import chain
-
 from elasticsearch.connection import RequestsHttpConnection
 from elasticsearch.connection_pool import ConnectionPool, DummyConnectionPool
 from elasticsearch.serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from elasticsearch.exceptions import ConnectionError, TransportError, SerializationError, \
                         ConnectionTimeout, ImproperlyConfigured
-import requests
 from requests_ntlm import HttpNtlmAuth
+import requests
+import time
 
 def get_host_info(node_info, host):
     """
