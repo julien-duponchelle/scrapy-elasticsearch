@@ -105,7 +105,7 @@ class ElasticSearchPipeline(object):
         helpers.bulk(self.es, self.items_buffer)
 
     def process_item(self, item, spider):
-        if isinstance(item, types.GeneratorType) or isinstance(item, types.ListType):
+        if isinstance(item, types.GeneratorType) or isinstance(item, list):
             for each in item:
                 self.process_item(each, spider)
         else:
