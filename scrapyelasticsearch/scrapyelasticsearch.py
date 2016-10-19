@@ -18,6 +18,7 @@
 
 from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
+from six import string_types
 from .transportNTLM import TransportNTLM
 
 import logging
@@ -69,8 +70,8 @@ class ElasticSearchPipeline(object):
     def get_unique_key(self, unique_key):
         if isinstance(unique_key, list):
             unique_key = unique_key[0].encode('utf-8')
-        elif not isinstance(unique_key, str):
-            raise Exception('unique key must be str')
+        elif not isinstance(unique_key, string_types):
+            raise Exception('unique key must be str or unicode')
 
         return unique_key
 
