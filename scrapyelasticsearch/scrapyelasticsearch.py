@@ -41,7 +41,7 @@ class ElasticSearchPipeline(object):
             if settings[setting_key] is None:
                 raise InvalidSettingsException('%s is not defined in settings.py' % setting_key)
 
-        required_settings = {'ELASTICSEARCH_SERVERS', 'ELASTICSEARCH_INDEX', 'ELASTICSEARCH_TYPE'}
+        required_settings = {'ELASTICSEARCH_INDEX', 'ELASTICSEARCH_TYPE'}
 
         for required_setting in required_settings:
             validate_setting(required_setting)
