@@ -8,6 +8,9 @@ Install
 
    pip install ScrapyElasticSearch
 
+   If you need support for ntlm:
+   pip install "ScrapyElasticSearch[extras]"
+
 Usage (Configure settings.py:)
 ----------------------
 ::

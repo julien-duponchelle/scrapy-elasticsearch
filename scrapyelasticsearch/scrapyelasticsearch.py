@@ -19,7 +19,6 @@
 from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
 from six import string_types
-from .transportNTLM import TransportNTLM
 
 import logging
 import hashlib
@@ -57,7 +56,9 @@ class ElasticSearchPipeline(object):
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
         authType = ext.settings['ELASTICSEARCH_AUTH']
+
         if authType == 'NTLM':
+            from .transportNTLM import TransportNTLM
             ext.es = Elasticsearch(hosts=es_servers,
                                    transport_class=TransportNTLM,
                                    ntlm_user= ext.settings['ELASTICSEARCH_USERNAME'],
