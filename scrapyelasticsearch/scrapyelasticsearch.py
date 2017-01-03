@@ -52,7 +52,7 @@ class ElasticSearchPipeline(object):
 
         cls.validate_settings(ext.settings)
 
-        es_servers = ext.settings['ELASTICSEARCH_SERVERS']
+        es_servers = ext.settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
         authType = ext.settings['ELASTICSEARCH_AUTH']
@@ -82,9 +82,17 @@ class ElasticSearchPipeline(object):
 
         index_name = self.settings['ELASTICSEARCH_INDEX']
         index_suffix_format = self.settings.get('ELASTICSEARCH_INDEX_DATE_FORMAT', None)
+        index_suffix_key = self.settings.get('ELASTICSEARCH_INDEX_DATE_KEY', None)
+        index_suffix_key_format = self.settings.get('ELASTICSEARCH_INDEX_DATE_KEY_FORMAT', None)
 
         if index_suffix_format:
-            index_name += "-" + datetime.strftime(datetime.now(),index_suffix_format)
+            if index_suffix_key and index_suffix_key_format:
+                dt = datetime.strptime(item[index_suffix_key], index_suffix_key_format)
+            else:
+                dt = datetime.now()
+            index_name += "-" + datetime.strftime(dt,index_suffix_format)
+        elif index_suffix_key:
+            index_name += "-" + index_suffix_key
 
         index_action = {
             '_index': index_name,
