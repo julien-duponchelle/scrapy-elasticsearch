@@ -68,7 +68,7 @@ class ElasticSearchPipeline(object):
             ext.es = Elasticsearch(hosts=es_servers, timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT', 60))
         return ext
 
-    def get_unique_key(self, unique_key):
+    def process_unique_key(self, unique_key):
         if isinstance(unique_key, list):
             unique_key = unique_key[0].encode('utf-8')
         elif isinstance(unique_key, string_types):
@@ -77,6 +77,12 @@ class ElasticSearchPipeline(object):
             raise Exception('unique key must be str or unicode')
 
         return unique_key
+    
+    def get_id(self, item):
+        item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
+        unique_key = self.process_unique_key(item_unique_key)
+        item_id = hashlib.sha1(unique_key).hexdigest()
+        return item_id
 
     def index_item(self, item):
 
@@ -101,9 +107,7 @@ class ElasticSearchPipeline(object):
         }
 
         if self.settings['ELASTICSEARCH_UNIQ_KEY'] is not None:
-            item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
-            unique_key = self.get_unique_key(item_unique_key)
-            item_id = hashlib.sha1(unique_key).hexdigest()
+            item_id = self.get_id(item)
             index_action['_id'] = item_id
             logging.debug('Generated unique key %s' % item_id)
 
