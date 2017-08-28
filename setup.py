@@ -23,8 +23,9 @@ setup(name='ScrapyElasticSearch',
       platforms=['Any'],
       install_requires=['scrapy', 'elasticsearch'],
       extras_require={
-          'requests': ['requests==2.10.0'],
-          'ntlm': ['requests_ntlm>=0.2.0']
+          'requests': ['requests>=2.10.0'],
+          'ntlm': ['requests_ntlm>=0.2.0'],
+          'ssl': ['certifi>=2017.7.27.1']
       },
       classifiers=['Development Status :: 4 - Beta',
                    'Environment :: No Input/Output (Daemon)',

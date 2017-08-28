@@ -44,6 +44,15 @@ Available parameters (in settings.py:)
    ELASTICSEARCH_USERNAME - optional field, set to 'DOMAIN\username', only used with NLTM authentification
    ELASTICSEARCH_PASSWORD - optional field, set to your 'password', only used with NLTM authentification
 
+   ELASTICSEARCH_CA - optional settings to if es servers require custom CA files.
+   Example:
+   ELASTICSEARCH_CA = {
+        'CA_CERT': '/path/to/cacert.pem',
+        'CLIENT_CERT': '/path/to/client_cert.pem',
+        'CLIENT_KEY': '/path/to/client_key.pem'
+  }
+
+
 Here is an example app (dirbot https://github.com/jayzeng/dirbot) in case you are still confused.
 
 Dependencies
@@ -52,6 +61,7 @@ See requirements.txt
 
 Changelog
 =========
+* 0.9: Accept custom CA cert to connect to es clusters
 * 0.8: Added support for NTLM authentification
 * 0.7.1: Added date format to the index name and a small bug fix
     - ELASTICSEARCH_BUFFER_LENGTH default was 9999, this has been changed to reflect documentation.
