@@ -52,7 +52,7 @@ class ElasticSearchPipeline(object):
 
         cls.validate_settings(ext.settings)
 
-        es_servers = ext.settings['ELASTICSEARCH_SERVERS']
+        es_servers = ext.settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
         authType = ext.settings['ELASTICSEARCH_AUTH']
@@ -68,7 +68,7 @@ class ElasticSearchPipeline(object):
             ext.es = Elasticsearch(hosts=es_servers, timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT', 60))
         return ext
 
-    def get_unique_key(self, unique_key):
+    def process_unique_key(self, unique_key):
         if isinstance(unique_key, list):
             unique_key = unique_key[0].encode('utf-8')
         elif isinstance(unique_key, string_types):
@@ -77,14 +77,28 @@ class ElasticSearchPipeline(object):
             raise Exception('unique key must be str or unicode')
 
         return unique_key
+    
+    def get_id(self, item):
+        item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
+        unique_key = self.process_unique_key(item_unique_key)
+        item_id = hashlib.sha1(unique_key).hexdigest()
+        return item_id
 
     def index_item(self, item):
 
         index_name = self.settings['ELASTICSEARCH_INDEX']
         index_suffix_format = self.settings.get('ELASTICSEARCH_INDEX_DATE_FORMAT', None)
+        index_suffix_key = self.settings.get('ELASTICSEARCH_INDEX_DATE_KEY', None)
+        index_suffix_key_format = self.settings.get('ELASTICSEARCH_INDEX_DATE_KEY_FORMAT', None)
 
         if index_suffix_format:
-            index_name += "-" + datetime.strftime(datetime.now(),index_suffix_format)
+            if index_suffix_key and index_suffix_key_format:
+                dt = datetime.strptime(item[index_suffix_key], index_suffix_key_format)
+            else:
+                dt = datetime.now()
+            index_name += "-" + datetime.strftime(dt,index_suffix_format)
+        elif index_suffix_key:
+            index_name += "-" + index_suffix_key
 
         index_action = {
             '_index': index_name,
@@ -93,9 +107,7 @@ class ElasticSearchPipeline(object):
         }
 
         if self.settings['ELASTICSEARCH_UNIQ_KEY'] is not None:
-            item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
-            unique_key = self.get_unique_key(item_unique_key)
-            item_id = hashlib.sha1(unique_key).hexdigest()
+            item_id = self.get_id(item)
             index_action['_id'] = item_id
             logging.debug('Generated unique key %s' % item_id)
 
