@@ -46,26 +46,48 @@ class ElasticSearchPipeline(object):
             validate_setting(required_setting)
 
     @classmethod
+    def init_es_client(cls, crawler_settings):
+        auth_type = crawler_settings.get('ELASTICSEARCH_AUTH')
+        es_timeout = crawler_settings.get('ELASTICSEARCH_TIMEOUT',60)
+
+        es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
+        es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
+
+        if auth_type == 'NTLM':
+            from .transportNTLM import TransportNTLM
+            es = Elasticsearch(hosts=es_servers,
+                               transport_class=TransportNTLM,
+                               ntlm_user= crawler_settings['ELASTICSEARCH_USERNAME'],
+                               ntlm_pass= crawler_settings['ELASTICSEARCH_PASSWORD'],
+                               timeout=es_timeout)
+
+            return es
+
+        es_settings = dict()
+        es_settings['hosts'] = es_servers
+        es_settings['timeout'] = es_timeout
+
+        if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
+            es_settings['http_auth'] = (crawler_settings['ELASTICSEARCH_USERNAME'], crawler_settings['ELASTICSEARCH_PASSWORD'])
+
+        if 'ELASTICSEARCH_CA' in crawler_settings:
+            import certifi
+            es_settings['port'] = 443
+            es_settings['use_ssl'] = True
+            es_settings['ca_certs'] = crawler_settings['ELASTICSEARCH_CA']['CA_CERT']
+            es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
+            es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
+
+        es = Elasticsearch(**es_settings)
+        return es
+
+    @classmethod
     def from_crawler(cls, crawler):
         ext = cls()
         ext.settings = crawler.settings
 
         cls.validate_settings(ext.settings)
-
-        es_servers = ext.settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
-        es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
-
-        authType = ext.settings['ELASTICSEARCH_AUTH']
-
-        if authType == 'NTLM':
-            from .transportNTLM import TransportNTLM
-            ext.es = Elasticsearch(hosts=es_servers,
-                                   transport_class=TransportNTLM,
-                                   ntlm_user= ext.settings['ELASTICSEARCH_USERNAME'],
-                                   ntlm_pass= ext.settings['ELASTICSEARCH_PASSWORD'],
-                                   timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT',60))
-        else :
-            ext.es = Elasticsearch(hosts=es_servers, timeout=ext.settings.get('ELASTICSEARCH_TIMEOUT', 60))
+        ext.es = cls.init_es_client(crawler.settings)
         return ext
 
     def process_unique_key(self, unique_key):
@@ -77,7 +99,7 @@ class ElasticSearchPipeline(object):
             raise Exception('unique key must be str or unicode')
 
         return unique_key
-    
+
     def get_id(self, item):
         item_unique_key = item[self.settings['ELASTICSEARCH_UNIQ_KEY']]
         unique_key = self.process_unique_key(item_unique_key)
