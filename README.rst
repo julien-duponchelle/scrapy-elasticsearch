@@ -25,6 +25,9 @@ Usage (Configure settings.py:)
    ELASTICSEARCH_TYPE = 'items'
    ELASTICSEARCH_UNIQ_KEY = 'url'  # Custom uniqe key
 
+   # can also accept a list of fields if need a composite key
+   ELASTICSEARCH_UNIQ_KEY = ['url', 'id']
+
 ELASTICSEARCH_SERVERS - list of hosts or string (single host). Host format: protocl://username:password@host:port.
 Examples:
     - ['http://username:password@elasticsearch.example.com:9200']
@@ -38,7 +41,7 @@ Available parameters (in settings.py:)
    ELASTICSEARCH_INDEX - elastic search index
    ELASTICSEARCH_INDEX_DATE_FORMAT - the format for date suffix for the index, see python datetime.strftime for format. Default is no date suffix.
    ELASTICSEARCH_TYPE - elastic search type
-   ELASTICSEARCH_UNIQ_KEY - optional field, unique key in string (must be a field declared in model, see items.py)
+   ELASTICSEARCH_UNIQ_KEY - optional field, unique key in string (must be a field or a list declared in model, see items.py)
    ELASTICSEARCH_BUFFER_LENGTH - optional field, number of items to be processed during each bulk insertion to Elasticsearch. Default size is 500.
    ELASTICSEARCH_AUTH  - optional field, set to 'NTLM' to use NTLM authentification
    ELASTICSEARCH_USERNAME - optional field, set to 'DOMAIN\username', only used with NLTM authentification
